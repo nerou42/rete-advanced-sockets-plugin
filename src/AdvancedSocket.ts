@@ -1,10 +1,11 @@
-import { ClassicPreset } from 'rete';
+import { ClassicPreset } from 'rete'
+
 import {
   ListenerMap,
   SocketConnectionInfo,
-  TypeInterface,
   TypedInputEvents,
-} from './types';
+  TypeInterface
+} from './types'
 
 /**
  * Advanced socket class
@@ -15,17 +16,17 @@ export class AdvancedSocket<
   T extends TypeInterface
 > extends ClassicPreset.Socket {
   private readonly listeners: ListenerMap<TypedInputEvents<T>> =
-    {} as ListenerMap<TypedInputEvents<T>>;
+    {} as ListenerMap<TypedInputEvents<T>>
 
   /**
    * The type that this socket is compatible with. Sub types are also compatible
    */
-  private _type: T;
-  private _connectionInfo: SocketConnectionInfo<T> | undefined = undefined;
+  private internalType: T
+  private internalConnectionInfo: SocketConnectionInfo<T> | null = null
 
   constructor(type: T) {
-    super('');
-    this._type = type;
+    super('')
+    this.internalType = type
   }
 
   // Add a listener for a specific event
@@ -34,10 +35,10 @@ export class AdvancedSocket<
     listener: TypedInputEvents<T>[K]
   ): void {
     if (!this.listeners[event]) {
-      this.listeners[event] = [];
+      this.listeners[event] = []
     }
     if (!this.listeners[event].includes(listener)) {
-      this.listeners[event].push(listener);
+      this.listeners[event].push(listener)
     }
   }
 
@@ -46,11 +47,10 @@ export class AdvancedSocket<
     event: K,
     listener: TypedInputEvents<T>[K]
   ): void {
-    if (!this.listeners[event]) return;
-    const a = this.listeners[event];
+    if (!this.listeners[event]) return
     this.listeners[event] = this.listeners[event].filter(
       (l) => l !== listener
-    ) as ListenerMap<TypedInputEvents<T>>[K];
+    ) as ListenerMap<TypedInputEvents<T>>[K]
   }
 
   // Emit an event
@@ -58,56 +58,58 @@ export class AdvancedSocket<
     event: K,
     eventData: Parameters<TypedInputEvents<T>[K]>[0]
   ): void {
-    if (!this.listeners[event]) return;
-    this.listeners[event].forEach((listener) => listener(eventData as any));
+    if (!this.listeners[event]) return
+    this.listeners[event].forEach((listener) => listener(eventData as any))
   }
 
   private emitOnConnectionChanged(): void {
     this.emit('onConnectionChanged', {
       oldConnection: this.connectionInfo,
-      newConnection: this.connectionInfo,
-    });
+      newConnection: this.connectionInfo
+    })
   }
 
   assignableBy(socket: AdvancedSocket<T>): boolean {
-    return this._type.assignableBy(socket.type);
+    return this.internalType.assignableBy(socket.type)
   }
 
   set type(type: T) {
-    const oldType = this.type;
-    this._type = type;
-    this.emit('onTypeChanged', { oldType, newType: type });
-    if (this._connectionInfo === undefined) {
-      return;
+    const oldType = this.type
+
+    this.internalType = type
+    this.emit('onTypeChanged', { oldType, newType: type })
+    if (this.internalConnectionInfo === null) {
+      return
     }
-    if (this._connectionInfo?.side === 'input') {
-      if (!this.type.assignableBy(this._connectionInfo.otherSocket.type)) {
-        this._connectionInfo.removeConnection();
-        return;
+    if (this.internalConnectionInfo?.side === 'input') {
+      if (!this.type.assignableBy(this.internalConnectionInfo.otherSocket.type)) {
+        this.internalConnectionInfo.removeConnection()
+        return
       }
     } else {
-      if (!this._connectionInfo.otherSocket.type.assignableBy(this.type)) {
-        this._connectionInfo.removeConnection();
-        return;
+      if (!this.internalConnectionInfo.otherSocket.type.assignableBy(this.type)) {
+        this.internalConnectionInfo.removeConnection()
+        return
       }
     }
-    this._connectionInfo.otherSocket.emitOnConnectionChanged();
+    this.internalConnectionInfo.otherSocket.emitOnConnectionChanged()
   }
 
   get type(): T {
-    return this._type;
+    return this.internalType
   }
 
-  get connectionInfo(): SocketConnectionInfo<T> | undefined {
-    return this._connectionInfo;
+  get connectionInfo(): SocketConnectionInfo<T> | null {
+    return this.internalConnectionInfo
   }
 
-  set connectionInfo(connectionInfo: SocketConnectionInfo<T> | undefined) {
-    const oldConnection = this._connectionInfo;
-    this._connectionInfo = connectionInfo;
+  set connectionInfo(connectionInfo: SocketConnectionInfo<T> | null) {
+    const oldConnection = this.internalConnectionInfo
+
+    this.internalConnectionInfo = connectionInfo
     this.emit('onConnectionChanged', {
       oldConnection,
-      newConnection: connectionInfo,
-    });
+      newConnection: connectionInfo
+    })
   }
 }

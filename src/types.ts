@@ -1,17 +1,18 @@
-import { ClassicPreset, GetSchemes } from 'rete';
-import { AdvancedSocket } from './AdvancedSocket';
+import { ClassicPreset, GetSchemes } from 'rete'
+
+import { AdvancedSocket } from './AdvancedSocket'
 
 export type EventListener<Event = undefined, Return = void> = (
   e: Event
-) => Return;
+) => Return
 
 export type ListenerMap<
   Events extends Record<string, EventListener<any, any>>
 > = {
   [K in keyof Events]: Events[K][];
-};
+}
 
-type Side = 'input' | 'output';
+type Side = 'input' | 'output'
 
 export interface TypeInterface {
   assignableBy(socketType: TypeInterface): boolean;
@@ -22,21 +23,21 @@ export type SocketConnectionInfo<T extends TypeInterface> = {
   side: Side;
   otherSocket: AdvancedSocket<T>;
   removeConnection: () => void;
-};
+}
 
 export type OnTypeChangedEvent<T extends TypeInterface> = {
   oldType: T;
   newType: T;
-};
+}
 export type OnConnectionChangedEvent<T extends TypeInterface> = {
-  oldConnection: SocketConnectionInfo<T> | undefined;
-  newConnection: SocketConnectionInfo<T> | undefined;
-};
+  oldConnection: SocketConnectionInfo<T> | null;
+  newConnection: SocketConnectionInfo<T> | null;
+}
 
 export type TypedInputEvents<T extends TypeInterface> = {
   onTypeChanged: EventListener<OnTypeChangedEvent<T>>;
   onConnectionChanged: EventListener<OnConnectionChangedEvent<T>>;
-};
+}
 
 export type Node<
   T extends TypeInterface,
@@ -55,14 +56,14 @@ export type Node<
   } = {
     [key in string]?: ClassicPreset.Control;
   }
-> = ClassicPreset.Node<Inputs, Outputs, Controls>;
+> = ClassicPreset.Node<Inputs, Outputs, Controls>
 
 export type Connection = ClassicPreset.Connection<
   ClassicPreset.Node,
   ClassicPreset.Node
->;
+>
 
 export type TypedScheme<T extends TypeInterface> = GetSchemes<
   Node<T>,
   Connection
->;
+>

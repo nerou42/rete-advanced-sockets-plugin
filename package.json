@@ -1,9 +1,9 @@
 {
   "name": "rete-advanced-sockets-plugin",
-  "version": "0.1.0",
-  "description": "",
+  "version": "0.1.7",
+  "description": "A plugin for formula to extend the default sockets",
   "scripts": {
-    "build": "rete build -c rete.config.ts",
+    "build": "tsup ./src/index.ts --dts --format esm",
     "lint": "rete lint"
   },
   "author": "",
@@ -14,6 +14,9 @@
   "devDependencies": {
     "rete": "^2.0.0",
     "rete-cli": "^1.0.3",
-    "typescript": "4.8.4"
-  }
+    "typescript": "4.8.4",
+    "tsup": "^8.2.3"
+  },
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts"
 }
