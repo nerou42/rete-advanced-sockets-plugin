@@ -1,6 +1,6 @@
 {
   "name": "rete-advanced-sockets-plugin",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "A plugin for formula to extend the default sockets",
   "scripts": {
     "build": "tsup ./src/index.ts --dts --format esm",
