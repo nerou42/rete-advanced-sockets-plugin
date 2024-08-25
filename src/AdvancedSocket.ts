@@ -112,4 +112,8 @@ export class AdvancedSocket<
       newConnection: connectionInfo
     })
   }
+
+  clone(): AdvancedSocket<T> {
+    return new AdvancedSocket(this.type);
+  }
 }
