@@ -1,5 +1,4 @@
 import { NodeEditor, Root, Scope } from 'rete'
-
 import { AdvancedSocket } from './AdvancedSocket'
 import { Connection, TypedScheme, TypeInterface } from './types'
 
@@ -11,11 +10,16 @@ export class AdvancedSocketsPlugin<
     super('FormulaPlugin')
   }
 
+  public silent: boolean = false;
+
   override setParent(scope: Scope<Root<Scheme>, []>): void {
     super.setParent(scope)
     const editor = this.parentScope<NodeEditor<Scheme>>(NodeEditor<Scheme>)
 
     this.addPipe((context: Root<Scheme>) => {
+      if(this.silent) {
+        return context;
+      }
       if (context.type === 'connectioncreate') {
         const [outputSocket, inputSocket] = this.socketsByConnection(
           context.data,
