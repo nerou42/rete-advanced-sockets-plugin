@@ -1,3 +1,5 @@
+# Replaced by [rete-callback-sockets-plugin](https://github.com/nerou42/rete-callback-sockets-plugin)
+
 Advanced Sockets
 ====
 #### Rete.js plugin
